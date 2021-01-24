@@ -22,7 +22,7 @@ xz_version=v5.2.3
 tor_url=https://git.torproject.org/tor.git
 tor_version=release-0.4.4
 
-NDK="$ANDROID_NDK"
+NDK="/opt/android-sdk/ndk/21.3.6528147"
 export PATH="$PATH:$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
 
 CCX_armv7a="armv7a-linux-androideabi16-clang++"
@@ -121,11 +121,11 @@ cd ../..
 cd ../../TorBuildScript/external/
 export EXTERNAL_ROOT=`pwd`/external
 
-git clone --single-branch --branch tor_openssl_version openssl_url
-git clone --single-branch --branch libevent_version libevent_url
-git clone --single-branch --branch zstd_version zstd_url
-git clone --single-branch --branch xz_version xz_url
-git clone --single-branch --branch tor_version tor_url
+git clone --single-branch --branch $tor_openssl_version $openssl_url
+git clone --single-branch --branch $libevent_version $libevent_url
+git clone --single-branch --branch $zstd_version $zstd_url
+git clone --single-branch --branch $xz_version $xz_url
+git clone --single-branch --branch $tor_version $tor_url
 
 #compile arm64-v8a things...
 #android r20 22 default arm64-v8a
@@ -156,7 +156,7 @@ mkdir -p libs
 export EXTERNAL_ROOT=`pwd`/external
 
 cd libs/
-git clone --single-branch --branch i2pd_openssl_version openssl_url
+git clone --single-branch --branch $i2pd_openssl_version $openssl_url
 git clone https://github.com/moritz-wundke/Boost-for-Android.git
 git clone https://github.com/miniupnp/miniupnp.git
 git clone https://github.com/PurpleI2P/android-ifaddrs.git
