@@ -23,6 +23,7 @@ tor_url=https://git.torproject.org/tor.git
 tor_version=release-0.4.4
 
 NDK="/opt/android-sdk/ndk/21.3.6528147"
+export ANDROID_NDK_HOME=$NDK
 export PATH="$PATH:$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
 
 CCX_armv7a="armv7a-linux-androideabi16-clang++"
@@ -148,10 +149,6 @@ cd ../../tordnscrypt/libs/
 ###########
 
 cd ../../PurpleI2PBuildScript/external/
-
-    - export TARGET_I2P_ABI=`echo $CI_JOB_NAME | awk '{print $5}'`
-    - export TARGET_I2P_PLATFORM=`echo $CI_JOB_NAME | awk '{print $3}'`
-
 mkdir -p libs
 export EXTERNAL_ROOT=`pwd`/external
 
@@ -166,6 +163,8 @@ git clone https://github.com/PurpleI2P/i2pd.git
 
 #compile arm64-v8a things...
 #android r20b 21 default arm64-v8a:
+export TARGET_I2P_ABI=arm64-v8a
+export TARGET_I2P_PLATFORM=21
 APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
 APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
 APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make showsetup
@@ -173,6 +172,8 @@ mv ../i2pd-android-binary/src/main/libs/arm64-v8a/libi2pd.so ../../tordnscrypt/l
 
 #compile armeabi-v7a things...
 #android r20b 16 default armeabi-v7a:
+export TARGET_I2P_ABI=armeabi-v7a
+export TARGET_I2P_PLATFORM=16
 APP_ABI=armeabi-v7a make clean
 APP_ABI=armeabi-v7a make
 APP_ABI=armeabi-v7a make showsetup
