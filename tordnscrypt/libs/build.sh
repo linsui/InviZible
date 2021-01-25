@@ -6,11 +6,11 @@
 
 if [[ $# == 1 && $1 == "arm64" ]]
 then
-    ARM64=true
-    echo "#compile arm64-v8a things..."
+    ABI=arm64-v8a
+    echo "compile arm64-v8a things..."
 else
-    ARM64=false
-    echo "#compile armeabi-v7a things..."
+    ABI=armeabi-v7a
+    echo "compile armeabi-v7a things..."
 fi
 
 obfs4proxy_version=obfs4proxy-0.0.11
@@ -28,17 +28,15 @@ export ANDROID_NDK_HOME=$NDK
 export PATH="$PATH:$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
 LIBS_ROOT=`pwd`
 
-if [ $ARM64 ]
+if [[ $ABI == arm64-v8a ]]
 then
     export CC="aarch64-linux-android29-clang"
     export CCX="aarch64-linux-android29-clang++"
     export GOARCH=arm64
-    ABI=arm64-v8a
 else
     export CC="armv7a-linux-androideabi16-clang"
     export CCX="armv7a-linux-androideabi16-clang++"
     export GOARCH=arm
-    ABI=armeabi-v7a
 fi
 
 export CGO_ENABLED=1
@@ -102,7 +100,7 @@ git clone --single-branch --branch $zstd_version https://github.com/facebook/zst
 git clone --single-branch --branch $xz_version https://git.tukaani.org/xz.git
 git clone --single-branch --branch $tor_version https://git.torproject.org/tor.git
 
-if [ $ARM64 ]
+if [[ $ABI == arm64-v8a ]]
 then
     #compile arm64-v8a things...
     #android r20 22 default arm64-v8a
@@ -138,7 +136,7 @@ cd ../
 
 git clone https://github.com/PurpleI2P/i2pd.git
 
-if [ $ARM64 ]
+if [[ $ABI == arm64-v8a ]]
 then
     #compile arm64-v8a things...
     #android r20b 21 default arm64-v8a:
