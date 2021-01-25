@@ -5,6 +5,7 @@
 ############
 
 if [[ $# == 1 && $1 == "arm64" ]]
+then
     ARM64=true
     echo "#compile arm64-v8a things..."
 else
