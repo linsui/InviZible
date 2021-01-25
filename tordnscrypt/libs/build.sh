@@ -107,15 +107,15 @@ then
     APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
     APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
     APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make showsetup
+    mv ../tor-android-binary/src/main/libs/arm64/libtor.so ${LIBS_ROOT}/${ABI}/libtor.so
 else
     #compile armeabi-v7a things...
     #android r20 22 default armeabi-v7a
     APP_ABI=armeabi make clean
     APP_ABI=armeabi make
     APP_ABI=armeabi make showsetup
+    mv ../tor-android-binary/src/main/libs/armeabi/libtor.so ${LIBS_ROOT}/${ABI}/libtor.so
 fi
-
-mv ../tor-android-binary/src/main/libs/${ABI}/libtor.so ${LIBS_ROOT}/${ABI}/libtor.so
 
 cd $LIBS_ROOT
 
