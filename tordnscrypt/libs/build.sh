@@ -26,6 +26,7 @@ tor_version=release-0.4.4
 NDK="/opt/android-sdk/ndk/21.3.6528147"
 export ANDROID_NDK_HOME=$NDK
 export PATH="$PATH:$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+LIBS_ROOT=`pwd`
 
 if [ $ARM64 ]
 then
@@ -58,9 +59,9 @@ git clone --single-branch --branch $obfs4proxy_version https://github.com/Yawnin
 cd obfs4/obfs4proxy/
 
 go build -ldflags="-s -w" -o libobfs4proxy.so
-mv libobfs4proxy.so ../../${ABI}/libobfs4proxy.so
+mv libobfs4proxy.so ${LIBS_ROOT}/${ABI}/libobfs4proxy.so
 
-cd ../..
+cd $LIBS_ROOT
 
 #####################
 # libdnscrypt-proxy #
@@ -70,21 +71,23 @@ git clone --single-branch --branch $dnscryptproxy_version https://github.com/DNS
 cd dnscrypt-proxy/dnscrypt-proxy/
 
 go build -ldflags="-s -w" -o libdnscrypt-proxy.so
-mv libdnscrypt-proxy.so ../../${ABI}/libdnscrypt-proxy.so
+mv libdnscrypt-proxy.so ${LIBS_ROOT}/${ABI}/libdnscrypt-proxy.so
 
-cd ../..
+cd $LIBS_ROOT
 
 ################
 # libsnowflake #
 ################
 
-git clone --single-branch --branch $snowflake_version https://github.com/keroserene/snowflake
-cd snowflake/proxy/
+git clone https://github.com/keroserene/snowflake
+cd snowflake/
+git checkout -f $snowflake_version -b $snowflake_version
+cd proxy/
 
 go build -ldflags="-s -w" -o libsnowflake.so
-mv libsnowflake.so ../../${ABI}/libsnowflake.so
+mv libsnowflake.so ${LIBS_ROOT}/${ABI}/libsnowflake.so
 
-cd ../..
+cd $LIBS_ROOT
 
 ##########
 # libtor #
@@ -106,7 +109,6 @@ then
     APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
     APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
     APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make showsetup
-    mv ../tor-android-binary/src/main/libs/armeabi/libtor.so ../../tordnscrypt/libs/arm64-v8a/libtor.so
 else
     #compile armeabi-v7a things...
     #android r20 22 default armeabi-v7a
@@ -115,9 +117,9 @@ else
     APP_ABI=armeabi make showsetup
 fi
 
-mv ../tor-android-binary/src/main/libs/${ABI}/libtor.so ../../tordnscrypt/libs/${ABI}/libtor.so
+mv ../tor-android-binary/src/main/libs/${ABI}/libtor.so ${LIBS_ROOT}/${ABI}/libtor.so
 
-cd ../../tordnscrypt/libs/
+cd $LIBS_ROOT
 
 ###########
 # libi2pd #
@@ -138,8 +140,8 @@ git clone https://github.com/PurpleI2P/i2pd.git
 
 if [ $ARM64 ]
 then
-#compile arm64-v8a things...
-#android r20b 21 default arm64-v8a:
+    #compile arm64-v8a things...
+    #android r20b 21 default arm64-v8a:
     export TARGET_I2P_ABI=arm64-v8a
     export TARGET_I2P_PLATFORM=21
     APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
@@ -155,6 +157,6 @@ else
     APP_ABI=armeabi-v7a make showsetup
 fi
 
-mv ../i2pd-android-binary/src/main/libs/${ABI}/libi2pd.so ../../tordnscrypt/libs/${ABI}/libi2pd.so
+mv ../i2pd-android-binary/src/main/libs/${ABI}/libi2pd.so ${LIBS_ROOT}/${ABI}/libi2pd.so
 
-cd ../../tordnscrypt/libs/
+cd $LIBS_ROOT
