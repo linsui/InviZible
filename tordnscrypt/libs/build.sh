@@ -33,10 +33,12 @@ then
     export CC="aarch64-linux-android29-clang"
     export CCX="aarch64-linux-android29-clang++"
     export GOARCH=arm64
+    export APP_ABI=arm64
 else
     export CC="armv7a-linux-androideabi16-clang"
     export CCX="armv7a-linux-androideabi16-clang++"
     export GOARCH=arm
+    export APP_ABI=armeabi
 fi
 
 export CGO_ENABLED=1
@@ -136,11 +138,12 @@ cd ../
 
 git clone https://github.com/PurpleI2P/i2pd.git
 
+export TARGET_I2P_ABI=$ABI
+
 if [[ $ABI == arm64-v8a ]]
 then
     #compile arm64-v8a things...
     #android r20b 21 default arm64-v8a:
-    export TARGET_I2P_ABI=arm64-v8a
     export TARGET_I2P_PLATFORM=21
     APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
     APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
@@ -148,7 +151,6 @@ then
 else
     #compile armeabi-v7a things...
     #android r20b 16 default armeabi-v7a:
-    export TARGET_I2P_ABI=armeabi-v7a
     export TARGET_I2P_PLATFORM=16
     APP_ABI=armeabi-v7a make clean
     APP_ABI=armeabi-v7a make
