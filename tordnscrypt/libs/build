@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 
 ############
 ## Config ##
@@ -7,7 +7,7 @@
 ndk_version=21.3.6528147
 obfs4proxy_version=obfs4proxy-0.0.11
 dnscryptproxy_version=2.0.44
-snowflake_version=webext-0.2.2
+snowflake_version=7043a055f9fb0680281ecffd7d458a43f2ce65b5
 tor_openssl_version=OpenSSL_1_1_1h
 libevent_version=release-2.1.11-stable
 zstd_version=v1.4.5
@@ -79,8 +79,10 @@ cd $LIBS_ROOT
 # libsnowflake #
 ################
 
-git clone --single-branch --branch $snowflake_version https://github.com/keroserene/snowflake
-cd snowflake/proxy/
+git clone https://github.com/keroserene/snowflake
+cd snowflake/
+git checkout -f $snowflake_version -b $snowflake_version
+cd proxy/
 
 go build -ldflags="-s -w" -o libsnowflake.so
 mv libsnowflake.so ${LIBS_ROOT}/${ABI}/libsnowflake.so
