@@ -4,6 +4,18 @@
 ## Config ##
 ############
 
+ndk_version=21.3.6528147
+obfs4proxy_version=obfs4proxy-0.0.11
+dnscryptproxy_version=2.0.44
+snowflake_version=webext-0.2.2
+tor_openssl_version=OpenSSL_1_1_1h
+libevent_version=release-2.1.11-stable
+zstd_version=v1.4.5
+xz_version=v5.2.3
+tor_version=release-0.4.4
+i2pd_openssl_version=OpenSSL_1_1_1g
+i2pd_version=2.35.0
+
 if [[ $# == 1 && $1 == "arm64" ]]
 then
     ABI=arm64-v8a
@@ -13,17 +25,7 @@ else
     echo "compile armeabi-v7a things..."
 fi
 
-obfs4proxy_version=obfs4proxy-0.0.11
-dnscryptproxy_version=2.0.44
-snowflake_version=7043a055f9fb0680281ecffd7d458a43f2ce65b5
-tor_openssl_version=OpenSSL_1_1_1h
-i2pd_openssl_version=OpenSSL_1_1_1g
-libevent_version=release-2.1.11-stable
-zstd_version=v1.4.5
-xz_version=v5.2.3
-tor_version=release-0.4.4
-
-NDK="/opt/android-sdk/ndk/21.3.6528147"
+NDK="/opt/android-sdk/ndk/${ndk_version}"
 export ANDROID_NDK_HOME=$NDK
 export PATH="$PATH:$NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
 LIBS_ROOT=`pwd`
@@ -33,12 +35,10 @@ then
     export CC="aarch64-linux-android29-clang"
     export CCX="aarch64-linux-android29-clang++"
     export GOARCH=arm64
-    export APP_ABI=arm64
 else
     export CC="armv7a-linux-androideabi16-clang"
     export CCX="armv7a-linux-androideabi16-clang++"
     export GOARCH=arm
-    export APP_ABI=armeabi
 fi
 
 export CGO_ENABLED=1
@@ -79,10 +79,8 @@ cd $LIBS_ROOT
 # libsnowflake #
 ################
 
-git clone https://github.com/keroserene/snowflake
-cd snowflake/
-git checkout -f $snowflake_version -b $snowflake_version
-cd proxy/
+git clone --single-branch --branch $snowflake_version https://github.com/keroserene/snowflake
+cd snowflake/proxy/
 
 go build -ldflags="-s -w" -o libsnowflake.so
 mv libsnowflake.so ${LIBS_ROOT}/${ABI}/libsnowflake.so
@@ -105,19 +103,19 @@ git clone --single-branch --branch $tor_version https://git.torproject.org/tor.g
 if [[ $ABI == arm64-v8a ]]
 then
     #compile arm64-v8a things...
-    #android r20 22 default arm64-v8a
-    APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
-    APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
-    APP_ABI=arm64 NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make showsetup
-    mv ../tor-android-binary/src/main/libs/arm64/libtor.so ${LIBS_ROOT}/${ABI}/libtor.so
+    export APP_ABI=arm64
+    NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
+    NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
+    NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make showsetup
 else
     #compile armeabi-v7a things...
-    #android r20 22 default armeabi-v7a
-    APP_ABI=armeabi make clean
-    APP_ABI=armeabi make
-    APP_ABI=armeabi make showsetup
-    mv ../tor-android-binary/src/main/libs/armeabi/libtor.so ${LIBS_ROOT}/${ABI}/libtor.so
+    export APP_ABI=armeabi
+    make clean
+    make
+    make showsetup
 fi
+
+mv ../tor-android-binary/src/main/libs/${APP_ABI}/libtor.so ${LIBS_ROOT}/${ABI}/libtor.so
 
 cd $LIBS_ROOT
 
@@ -136,27 +134,26 @@ git clone https://github.com/miniupnp/miniupnp.git
 git clone https://github.com/PurpleI2P/android-ifaddrs.git
 cd ../
 
-git clone https://github.com/PurpleI2P/i2pd.git
+git clone --single-branch --branch $i2pd_version https://github.com/PurpleI2P/i2pd.git
 
 export TARGET_I2P_ABI=$ABI
+export APP_ABI=$ABI
 
 if [[ $ABI == arm64-v8a ]]
 then
     #compile arm64-v8a things...
-    #android r20b 21 default arm64-v8a:
     export TARGET_I2P_PLATFORM=21
-    APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
-    APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
-    APP_ABI=arm64-v8a NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make showsetup
+    NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make clean
+    NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make
+    NDK_PLATFORM_LEVEL=21 NDK_BIT=64 make showsetup
 else
     #compile armeabi-v7a things...
-    #android r20b 16 default armeabi-v7a:
     export TARGET_I2P_PLATFORM=16
-    APP_ABI=armeabi-v7a make clean
-    APP_ABI=armeabi-v7a make
-    APP_ABI=armeabi-v7a make showsetup
+    make clean
+    make
+    make showsetup
 fi
 
-mv ../i2pd-android-binary/src/main/libs/${ABI}/libi2pd.so ${LIBS_ROOT}/${ABI}/libi2pd.so
+mv ../i2pd-android-binary/src/main/libs/${APP_ABI}/libi2pd.so ${LIBS_ROOT}/${ABI}/libi2pd.so
 
 cd $LIBS_ROOT
